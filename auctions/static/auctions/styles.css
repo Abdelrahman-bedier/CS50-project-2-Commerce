@@ -1,0 +1,44 @@
+body {
+    padding: 10px;
+}
+
+
+
+.watchlist {
+    text-decoration: none;
+    display: inline-block;
+    border-radius: 8px;
+    transition: all .2s ease-in;
+}
+#watchlist_on{
+    background: #14c179;
+    color: black;
+}
+#watchlist_off{
+    background: #00000000;
+    color: rgb(0, 0, 0);
+}
+  
+#watchlist_on:hover{
+    background: white;
+}
+#watchlist_off:hover{
+    background: #14c179;
+}
+
+#watch_button{
+    padding-right: 0px;
+}
+
+#watchlist_href {
+    padding-right: 0px;
+}
+.num {
+    margin-top: 8px;
+    margin-left: 4px;
+    background: #4d65af;
+    color: white;
+    border-radius: 8px;
+    text-align: center;
+    width: 20px;
+}

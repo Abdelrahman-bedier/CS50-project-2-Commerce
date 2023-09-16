@@ -1,0 +1,32 @@
+{% extends "auctions/layout.html" %}
+{% block title %}
+{{human_category}}
+{% endblock %}
+{% block body %}
+
+
+<h2>{{human_category}} Listings</h2>
+{% for listing, max_bid in all_lisitngs_in_category.items %}
+    <div class="row mt-4 border">
+        <div class="col-sm-2">
+            <img src="{{ listing.image }}" alt="lisitng image" width="220" height="220">
+        </div>
+        <div class="col-sm-3">
+            <div class="well">
+                <h3><a href="{% url 'auctions:listing' listing.id %}"> {{ listing.title }} </a></h3>
+                <p> {{ listing.description }} </p>
+                <p> <b>Starting bid: </b> {{ listing.starting_bid }} <b>$</b> </p>
+                <p> <b>Current bid: </b> {{ max_bid }} <b>$</b> </p>
+                <p> <sub> last updated at: {{ listing.updated_at }}  </sub></p>
+            </div>
+        </div>
+    </div>
+{% empty %}
+<div>
+    <h5>No Active listings in {{human_category}} category! Create the first listing.</h5>
+    <a href="{% url 'auctions:create' %}">Create new listing</a>
+</div>
+{% endfor %}
+
+
+{% endblock %}

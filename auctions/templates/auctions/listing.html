@@ -1,0 +1,161 @@
+{% extends "auctions/layout.html" %}
+
+{% block title %}
+{{ listing.title }}
+{% endblock %}
+
+{% block body %}
+{% if not available_flag %}
+<h2 style="color: red;">Closed Auction</h2>
+{% endif %}
+
+{% if messages %}
+    {% for message in messages %}
+        {% if 'created' in message.tags %}
+            <div class="alert alert-{{ message.tags}}">{{ message }}</div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<h1>Listing: {{ listing.title }}</h1>
+
+{% if user.is_authenticated and available_flag and user != listing.user %}
+<div class="row">
+    <div class="col-auto" id="watch_button">
+        <form action="{% url 'auctions:listing' listing.id %}" method="POST">
+            {% csrf_token %}
+            {% if watchlist_flag %}
+                <input type="submit" name="rmv_watchlist" value="Watchlisted" class="watchlist" id="watchlist_on">
+            {% else %}
+                <input type="submit" name="add_watchlist" value="Watchlist" class="watchlist" id="watchlist_off">
+            {% endif %}
+        </form>
+    </div>
+</div>
+{% endif %}
+{% if messages %}
+    {% for message in messages %}
+        {% if 'watchlist' in message.tags %}
+            <div class="alert alert-{{ message.tags}}">{{ message }}</div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+<div class="row">
+    <div class="col"><img src="{{ listing.image }}" alt="lisitng image" height="450"></div>
+</div>
+<div class="row">
+    <div class="col">
+        <p> {{ listing.description }} </p>
+        <p> <b>Starting bid: </b> {{ listing.starting_bid }} <b>$</b> </p>
+
+        {% if max_bid == "no bids" and user != listing.user %}
+        <p> <b>No bids available, Be the first to bid!</b> </p>
+        {% else %}
+            <p> <b>Current bid: </b> {{ max_bid.value }} <b>$</b> </p>
+            <div>
+                {% if max_bid_current_user_flg %}
+                    <sub> {{ num_bids }} bid(s) so far! <b>You are the highest bidder !</b></sub>
+                {% else %}
+                    <sub> {{ num_bids }} bid(s) so far! </sub>
+                {% endif %}
+
+            </div>
+        {% endif %}
+        {% if user.is_authenticated and available_flag and user != listing.user %}
+            <form action="{% url 'auctions:listing' listing.id %}" method="POST">
+                {% csrf_token %}
+                <input type="number" id="bid_value" name="bid_value" min="{{ minimum_bid }}" placeholder="Bid">
+                <input type="submit" value="Place bid">
+            </form>
+        {% endif %}
+    </div>
+
+</div>
+<div class="row mt-3">
+    <div class="col-auto">
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'bid' in message.tags %}
+                    <div class="alert alert-{{ message.tags}}">{{ message }}</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+
+</div>
+<div class="row">
+    <div class="col">
+        {% if author_flag and available_flag and max_bid.value%}
+        <form action="{% url 'auctions:listing' listing.id %}" method="POST">
+            {% csrf_token %}
+            <input type="submit" name="close_auction" value="Close auction">
+        </form>
+        {% endif %}
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'closed' in message.tags %}
+                    <div class="alert alert-{{ message.tags}}">{{ message }} with {{max_bid.value}}$ as highest bid</div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        {% if max_bid_current_user_flg and not available_flag %}
+        <div class="row">
+            <div class="alert alert-success col-auto">
+                You won this auction, Congratulations!
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+<div class="row mt-3 details">
+    <div class="col">
+        <h2>Details</h2>
+        <ul>
+            <li>
+                Listed by: {{ listing.user }}
+            </li>
+            <li>
+                
+                Category: <a href="{% url 'auctions:specific_category' listing.category %}">{{ listing.get_category_display }}</a> 
+            </li>
+        </ul>
+    </div>
+</div>
+<div class="row mt-3 comments">
+    <div class="col">
+        <h2>Comments</h2>
+    </div>
+</div>
+{% for comment in comments%}
+<div class="row">
+    <div class="col">
+        <b>{{ comment.user }}:</b> {{comment.text}}
+    </div>
+</div>
+{% endfor %}
+
+<div class="row">
+    <div class="col-auto">
+{% if messages %}
+    {% for message in messages %}
+        {% if 'comment' in message.tags %}
+            <div class="alert alert-{{ message.tags}}">{{ message }}</div>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+</div>
+</div>
+
+{% if user.is_authenticated %}
+<form action="{% url 'auctions:listing' listing.id %}" method="POST">
+    {% csrf_token %}
+    <textarea rows="3" cols="50" name="comment" placeholder="Add your comment..."></textarea>
+    <input type="submit" value="Add comment">
+</form>
+{% endif %}
+
+
+{% endblock %}

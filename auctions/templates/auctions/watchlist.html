@@ -1,0 +1,33 @@
+{% extends "auctions/layout.html" %}
+{% block title %}
+Watchlist
+{% endblock %}
+{% block body %}
+
+<h2>On watchlist</h2>
+
+{% for listing, max_bid in listings.items %}
+    <div class="row mt-4 border">
+        <div class="col-sm-2">
+            <img src="{{ listing.image }}" alt="lisitng image" width="220" height="220">
+        </div>
+        <div class="col-sm-3">
+            <div class="well">
+                <h3><a href="{% url 'auctions:listing' listing.id %}"> {{ listing.title }} </a> </h3> 
+                {% if not listing.available %} <h4 style="color: red;">Closed</h4>{% endif %}
+                <p> {{ listing.description }} </p>
+                <p> <b>Starting bid: </b> {{ listing.starting_bid }} <b>$</b> </p>
+                <p> <b>Current bid: </b> {{ max_bid }} <b>$</b> </p>
+                <p> <sub> last updated at: {{ listing.updated_at }}  </sub></p>
+            </div>
+        </div>
+    </div>
+{% empty %}
+<div>
+    <h5>No listings! add listings to your watchlist</h5>
+    <a href="{% url 'auctions:index' %}">Active Listings</a>
+</div>
+{% endfor %}
+
+
+{% endblock %}
